@@ -4,7 +4,7 @@
 using namespace std;
 //#define WINDOWS
 
-const int tests = 12;
+const int tests = 10;
 const string solution = "main";
 
 // Генерация названия теста по его номеру
@@ -20,6 +20,12 @@ string output(int t) {
 	return s + ".out";
 }
 
+void print(vector <string> &a) {
+	if (a.empty()) cout << "*empty output*";
+	else for (string &s: a) cout << s << ' ';
+	cout << endl;
+}
+
 int main() {
 	
 	cout << "Task checker (";
@@ -29,18 +35,24 @@ int main() {
 	cout << "Linux";
 	#endif
 	cout << " version)" << endl;
+	cout << "Press Ctrl+C to skip test" << endl;
 	
 	int score = 0;
 	for (int t = 1; t <= tests; t++) {
+		cout << "#" << t << ": " << flush;
+		
 		string command = solution + " <" + input(t) + " >.checker";
 		#ifndef WINDOWS
 		command = "./" + command;
 		#endif
 		
+		// Запуск решения
 		system(command.c_str());
 		
-		vector <string> a, b; string c;
+		// Ввод ответов
 		fstream fin;
+		vector <string> a, b; string c;
+		
 		fin.open(".checker");
 		while (fin >> c) a.push_back(c);
 		fin.close();
@@ -49,25 +61,24 @@ int main() {
 		while (fin >> c) b.push_back(c);
 		fin.close();
 		
+		// Проверка
 		if (a == b) {
-			cout << "#" << t << ": Accepted" << endl;
+			cout << "Accepted" << endl;
 			score++;
 		} else {
-			cout << "#" << t << ": Wrong answer" << endl;
+			cout << "Wrong answer" << endl;
 			
 			cout << "Participant:" << endl;
-			for (string f: a) cout << f << ' ';
-			cout << endl;
+			print(a);
 			
 			cout << "Jury:" << endl;
-			for (string f: b) cout << f << ' ';
-			cout << endl;
+			print(b);
 		}
 	}
 	cout << "Score: " << score << endl;
 	
 	#ifdef WINDOWS
-	cin.get();
+	system("pause");
 	#endif
 	
 	return 0;
