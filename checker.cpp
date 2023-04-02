@@ -5,8 +5,20 @@ using namespace std;
 //#define WINDOWS
 
 const int tests = 12;
-const string solution = "main", input = ".in", output = ".out";
-fstream fin;
+const string solution = "main";
+
+// Генерация названия теста по его номеру
+// (Для каждой задачи по разному)
+string input(int t) {
+	string s = to_string(t);
+	if (s.size() == 1) s = "0" + s;
+	return s + ".in";
+}
+string output(int t) {
+	string s = to_string(t);
+	if (s.size() == 1) s = "0" + s;
+	return s + ".out";
+}
 
 int main() {
 	
@@ -20,10 +32,7 @@ int main() {
 	
 	int score = 0;
 	for (int t = 1; t <= tests; t++) {
-		string s = to_string(t);
-		if (s.size() == 1) s = "0" + s;
-		
-		string command = solution + " <" + s + input + " >output.txt";
+		string command = solution + " <" + input(t) + " >.checker";
 		#ifndef WINDOWS
 		command = "./" + command;
 		#endif
@@ -31,11 +40,12 @@ int main() {
 		system(command.c_str());
 		
 		vector <string> a, b; string c;
-		fin.open("output.txt");
+		fstream fin;
+		fin.open(".checker");
 		while (fin >> c) a.push_back(c);
 		fin.close();
 		
-		fin.open(s + output);
+		fin.open(output(t));
 		while (fin >> c) b.push_back(c);
 		fin.close();
 		
